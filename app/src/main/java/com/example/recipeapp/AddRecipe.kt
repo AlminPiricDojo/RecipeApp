@@ -7,10 +7,13 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import dagger.hilt.android.AndroidEntryPoint
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class AddRecipe : AppCompatActivity() {
     private lateinit var etTitle: EditText
     private lateinit var etAuthor: EditText
@@ -18,6 +21,9 @@ class AddRecipe : AppCompatActivity() {
     private lateinit var etInstructions: EditText
     private lateinit var btSubmit: Button
     private lateinit var btCancel: Button
+
+    @Inject
+    lateinit var apiInterface: APIInterface
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,9 +36,8 @@ class AddRecipe : AppCompatActivity() {
         btSubmit = findViewById(R.id.btSubmit)
         btSubmit.setOnClickListener {
             if(etTitle.text.isNotEmpty() && etAuthor.text.isNotEmpty()){
-                val apiInterface = APIClient().getClient()?.create(APIInterface::class.java)
 
-                apiInterface?.addRecipe(
+                apiInterface.addRecipe(
                     Recipe(
                         0,
                         etTitle.text.toString(),
@@ -40,8 +45,9 @@ class AddRecipe : AppCompatActivity() {
                         etIngredients.text.toString(),
                         etInstructions.text.toString()
                     )
-                )!!.enqueue(object: Callback<Recipe> {
+                ).enqueue(object: Callback<Recipe> {
                     override fun onResponse(call: Call<Recipe>, response: Response<Recipe>) {
+                        Log.d("AddRecipe", "Added new recipe. Response: $response")
                         val intent = Intent(this@AddRecipe, MainActivity::class.java)
                         startActivity(intent)
                     }
