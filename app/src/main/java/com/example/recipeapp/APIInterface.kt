@@ -7,11 +7,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface APIInterface {
-    // This function returns a Call (we have to use the await or awaitResponse function)
-    @GET("recipes/")
-    fun getAll(): Call<List<Recipe>>
 
-    // This function returns a Response (we no longer need the await function)
     @GET("recipes/")
     suspend fun getAllResponse(): Response<List<Recipe>>
 
